@@ -12,10 +12,9 @@ export default async function handler(req, res) {
     const apiKey = process.env.ANTHROPIC_API_KEY;
 
     if (!apiKey) {
-      return res.status(500).json({ error: 'Chiave API mancante sul server' });
+      return res.status(500).json({ reply: "⚠️ Server configuration error: Missing API Key on Vercel." });
     }
 
-    // Qui inseriamo le istruzioni segrete di SAM che l'utente non deve poter modificare
     const SYSTEM_PROMPT = `You are an expert Travel Assistant called "SAM".
 Rules you must always follow:
 1. Always respond in English regardless of the language the user writes in.
@@ -24,13 +23,14 @@ Rules you must always follow:
 4. At the end of every response, include 1-2 helpful and real clickable links (use Markdown format: [Label](URL)).
 5. When the user describes their travel preferences, react with a warm personal connection phrase like "Fantastic! We have the same preferences! 🙌" or "We're very similar! I love that too! 😄".`;
 
-    // Chiamata sicura ai server di Claude
+    // Chiamata ai server di Claude
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01'
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
         model: 'claude-3-5-sonnet-20241022',
@@ -41,10 +41,23 @@ Rules you must always follow:
     });
 
     const data = await response.json();
-    const reply = data.content?.map(b => b.text || '').join('') || "Sorry, I didn't understand.";
+
+    if (!response.ok) {
+      console.error('Anthropic Error:', data);
+      return res.status(200).json({ reply: `⚠️ Anthropic API Error: ${data.error?.message || 'Unknown error'}` });
+    }
+
+    // Estrazione sicura del testo della risposta
+    let reply = "Sorry, I didn't understand.";
+    if (data.content && Array.isArray(data.content) && data.content[0]) {
+      reply = data.content[0].text || reply;
+    } else if (typeof data.content === 'string') {
+      reply = data.content;
+    }
 
     return res.status(200).json({ reply });
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    console.error('Catch Error:', error);
+    return res.status(200).json({ reply: `⚠️ Connection error: ${error.message}` });
   }
 }
