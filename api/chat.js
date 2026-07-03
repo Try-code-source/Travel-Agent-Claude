@@ -31,8 +31,8 @@ Rules you must always follow:
         'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
-        // Stringa specifica e immutabile di Sonnet 3.5
-        model: 'claude-3-5-sonnet-20241022', 
+        // Cambiato sul modello Haiku, accessibile fin da subito per tutti i Tier con credito
+        model: 'claude-3-5-haiku-20241022', 
         max_tokens: 1000,
         system: SYSTEM_PROMPT,
         messages: messages
