@@ -1,5 +1,4 @@
 export default async function handler(req, res) {
-  // Configurazione di sicurezza per evitare blocchi del browser
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -23,7 +22,7 @@ Rules you must always follow:
 4. At the end of every response, include 1-2 helpful and real clickable links (use Markdown format: [Label](URL)).
 5. When the user describes their travel preferences, react with a warm personal connection phrase like "Fantastic! We have the same preferences! 🙌" or "We're very similar! I love that too! 😄".`;
 
-    // Chiamata ai server di Anthropic usando il modello Sonnet Latest
+    // Configurato con il modello esatto della nuova generazione (Sonnet 5)
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -33,7 +32,7 @@ Rules you must always follow:
         'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
-        model: 'claude-3-5-sonnet-latest', 
+        model: 'claude-5-sonnet-latest', // Aggiornato alla generazione attuale 5 dello screenshot
         max_tokens: 1000,
         system: SYSTEM_PROMPT,
         messages: messages
@@ -47,7 +46,6 @@ Rules you must always follow:
       return res.status(200).json({ reply: `⚠️ Anthropic API Error: ${data.error?.message || 'Unknown error'}` });
     }
 
-    // Estrazione sicura del testo della risposta
     let reply = "Sorry, I didn't understand.";
     if (data.content && Array.isArray(data.content) && data.content[0]) {
       reply = data.content[0].text || reply;
