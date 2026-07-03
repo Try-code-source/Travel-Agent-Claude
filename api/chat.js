@@ -22,7 +22,6 @@ Rules you must always follow:
 4. At the end of every response, include 1-2 helpful and real clickable links (use Markdown format: [Label](URL)).
 5. When the user describes their travel preferences, react with a warm personal connection phrase like "Fantastic! We have the same preferences! 🙌" or "We're very similar! I love that too! 😄".`;
 
-    // Stringa ufficiale standard per l'API di Anthropic
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
