@@ -31,8 +31,8 @@ Rules you must always follow:
         'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
-        // Aggiornato all'identificativo ufficiale della generazione 5 presente nel tuo account
-        model: 'claude-5-sonnet-20260601', 
+        // Stringa specifica e immutabile di Sonnet 3.5
+        model: 'claude-3-5-sonnet-20241022', 
         max_tokens: 1000,
         system: SYSTEM_PROMPT,
         messages: messages
