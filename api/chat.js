@@ -1,4 +1,4 @@
-export default async function handler(req, res) {
+eexport default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -25,8 +25,8 @@ export default async function handler(req, res) {
         'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
-        // Impostiamo il modello Sonnet 5 attivo sul tuo account
-        model: 'claude-5-sonnet', 
+        // Stringa esatta presa dal tuo Workbench
+        model: 'claude-sonnet-5', 
         max_tokens: 1000,
         system: SYSTEM_PROMPT,
         messages: messages
