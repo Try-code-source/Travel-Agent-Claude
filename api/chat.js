@@ -25,7 +25,7 @@ export default async function handler(req, res) {
         'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
-        // Inserito il modello Sonnet 5 visibile nella tua dashboard
+        // Impostiamo il modello Sonnet 5 attivo sul tuo account
         model: 'claude-5-sonnet', 
         max_tokens: 1000,
         system: SYSTEM_PROMPT,
