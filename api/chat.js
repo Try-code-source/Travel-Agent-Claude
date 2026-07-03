@@ -1,4 +1,4 @@
-eexport default async function handler(req, res) {
+export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -20,8 +20,8 @@ eexport default async function handler(req, res) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01' // Rimosso l'header client-side che bloccava la connessione server-to-server
+        'x-api-key': apiKey.trim(), // Rimuove eventuali spazi vuoti copiati per errore
+        'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
         model: 'claude-sonnet-5', 
@@ -31,11 +31,19 @@ eexport default async function handler(req, res) {
       })
     });
 
-    const data = await response.json();
+    // Leggiamo prima il testo grezzo per evitare crash se la risposta non è un JSON
+    const textData = await response.text();
+    let data;
+    
+    try {
+      data = JSON.parse(textData);
+    } catch (e) {
+      return res.status(200).json({ reply: `⚠️ Errore di formato Anthropic (Non-JSON): ${textData.substring(0, 100)}` });
+    }
 
     if (!response.ok) {
       console.error('Anthropic Error:', data);
-      return res.status(200).json({ reply: `⚠️ Errore Anthropic: [${data.error?.type || 'N/A'}] - ${data.error?.message || 'Unknown error'}` });
+      return res.status(200).json({ reply: `⚠️ Errore Anthropic: [${data.error?.type || 'N/A'}] - ${data.error?.message || 'Errore sconosciuto'}` });
     }
 
     let reply = "Sorry, I didn't understand.";
@@ -46,6 +54,6 @@ eexport default async function handler(req, res) {
     return res.status(200).json({ reply });
   } catch (error) {
     console.error('Catch Error:', error);
-    return res.status(200).json({ reply: `⚠️ Connection error: ${error.message}` });
+    return res.status(200).json({ reply: `⚠️ Errore interno del codice: ${error.message}` });
   }
 }
