@@ -31,8 +31,8 @@ Rules you must always follow:
         'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
-        // Cambiato sul modello Haiku, accessibile fin da subito per tutti i Tier con credito
-        model: 'claude-3-5-haiku-20241022', 
+        // Forziamo il modello Opus della serie precedente, aggirando i blocchi della serie 3.5/5
+        model: 'claude-3-opus-20240229', 
         max_tokens: 1000,
         system: SYSTEM_PROMPT,
         messages: messages
