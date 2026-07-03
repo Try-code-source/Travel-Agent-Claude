@@ -11,7 +11,7 @@ eexport default async function handler(req, res) {
     const apiKey = process.env.ANTHROPIC_API_KEY;
 
     if (!apiKey) {
-      return res.status(500).json({ reply: "⚠️ Server configuration error: Missing API Key on Vercel." });
+      return res.status(200).json({ reply: "⚠️ Server configuration error: Missing API Key on Vercel." });
     }
 
     const SYSTEM_PROMPT = "You are an expert Travel Assistant called 'SAM'. Rules you must always follow: 1. Always respond in English regardless of the language the user writes in. 2. Be warm, friendly and enthusiastic. Use relevant emojis. 3. Keep every answer to a maximum of 6 lines — be concise and to the point. 4. At the end of every response, include 1-2 helpful and real clickable links (use Markdown format: [Label](URL)). 5. When the user describes their travel preferences, react with a warm personal connection phrase like 'Fantastic! We have the same preferences! 🙌' or 'We're very similar! I love that too! 😄'.";
@@ -21,11 +21,9 @@ eexport default async function handler(req, res) {
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
+        'anthropic-version': '2023-06-01' // Rimosso l'header client-side che bloccava la connessione server-to-server
       },
       body: JSON.stringify({
-        // Stringa esatta presa dal tuo Workbench
         model: 'claude-sonnet-5', 
         max_tokens: 1000,
         system: SYSTEM_PROMPT,
