@@ -23,7 +23,7 @@ Rules you must always follow:
 4. At the end of every response, include 1-2 helpful and real clickable links (use Markdown format: [Label](URL)).
 5. When the user describes their travel preferences, react with a warm personal connection phrase like "Fantastic! We have the same preferences! 🙌" or "We're very similar! I love that too! 😄".`;
 
-    // Chiamata ai server di Claude
+    // Chiamata ai server di Claude usando il modello Haiku (più stabile e compatibile)
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -33,7 +33,7 @@ Rules you must always follow:
         'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
-        model: 'claude-3-5-sonnet-20241022',
+        model: 'claude-3-haiku-20240307', 
         max_tokens: 1000,
         system: SYSTEM_PROMPT,
         messages: messages
