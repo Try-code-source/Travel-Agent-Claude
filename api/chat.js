@@ -14,7 +14,6 @@ export default async function handler(req, res) {
       return res.status(500).json({ reply: "⚠️ Server configuration error: Missing API Key on Vercel." });
     }
 
-    // Corretto l'uso dei backtick per i testi multi-riga
     const SYSTEM_PROMPT = `You are an expert Travel Assistant called "SAM".
 Rules you must always follow:
 1. Always respond in English regardless of the language the user writes in.
@@ -32,7 +31,8 @@ Rules you must always follow:
         'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
-        model: 'claude-3-5-sonnet-latest', 
+        // Aggiornato all'identificativo ufficiale della generazione 5 presente nel tuo account
+        model: 'claude-5-sonnet-20260601', 
         max_tokens: 1000,
         system: SYSTEM_PROMPT,
         messages: messages
@@ -43,7 +43,6 @@ Rules you must always follow:
 
     if (!response.ok) {
       console.error('Anthropic Error:', data);
-      // Risposta d'errore pulita per capire se dipende dai fondi o dalla chiave
       return res.status(200).json({ reply: `⚠️ Errore Anthropic: [${data.error?.type || 'N/A'}] - ${data.error?.message || 'Unknown error'}` });
     }
 
