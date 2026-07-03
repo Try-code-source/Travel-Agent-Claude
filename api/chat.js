@@ -20,7 +20,7 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': apiKey.trim(), // Rimuove eventuali spazi vuoti copiati per errore
+        'x-api-key': apiKey.trim(),
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
@@ -31,29 +31,32 @@ export default async function handler(req, res) {
       })
     });
 
-    // Leggiamo prima il testo grezzo per evitare crash se la risposta non è un JSON
     const textData = await response.text();
     let data;
     
     try {
       data = JSON.parse(textData);
     } catch (e) {
-      return res.status(200).json({ reply: `⚠️ Errore di formato Anthropic (Non-JSON): ${textData.substring(0, 100)}` });
+      return res.status(200).json({ reply: `⚠️ Errore formato: ${textData.substring(0, 100)}` });
     }
 
     if (!response.ok) {
-      console.error('Anthropic Error:', data);
-      return res.status(200).json({ reply: `⚠️ Errore Anthropic: [${data.error?.type || 'N/A'}] - ${data.error?.message || 'Errore sconosciuto'}` });
+      return res.status(200).json({ reply: `⚠️ Errore Anthropic: [${data.error?.type || 'N/A'}] - ${data.error?.message || 'Errore'}` });
     }
 
-    let reply = "Sorry, I didn't understand.";
-    if (data.content && Array.isArray(data.content) && data.content[0]) {
-      reply = data.content[0].text || reply;
+    // Controllo flessibile e robusto per estrarre il testo da Claude 5
+    let reply = "";
+    if (data.content && Array.isArray(data.content)) {
+      reply = data.content.map(block => block.text || "").join(" ").trim();
+    }
+
+    // Se per qualsiasi motivo l'estrazione fallisce, ti mostriamo la struttura reale per capire cosa risponde
+    if (!reply) {
+      reply = `Debug - Risposta ricevuta ma vuota. Struttura: ${JSON.stringify(data).substring(0, 200)}`;
     }
 
     return res.status(200).json({ reply });
   } catch (error) {
-    console.error('Catch Error:', error);
-    return res.status(200).json({ reply: `⚠️ Errore interno del codice: ${error.message}` });
+    return res.status(200).json({ reply: `⚠️ Errore interno: ${error.message}` });
   }
 }
