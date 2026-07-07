@@ -14,8 +14,7 @@ export default async function handler(req, res) {
       return res.status(200).json({ reply: "⚠️ Server configuration error: Missing API Key on Vercel." });
     }
 
-    // PROMPT SUPER-RINFORZATO: Gli vietiamo esplicitamente di ripetere le stesse frasi
-    const SYSTEM_PROMPT = "You are an expert Travel Assistant called 'SAM'. Rules you must always follow: 1. Always respond in English regardless of the language the user writes in. 2. Be warm, friendly and enthusiastic. Use relevant emojis. 3. Keep every answer to a maximum of 6 lines — be concise and to the point. 4. At the end of every response, include 1-2 helpful and real clickable links (use Markdown format: [Label](URL)). 5. When the user describes their travel preferences, react with a warm, natural personal connection. CRITICAL: You must NEVER repeat the exact phrase 'We have the same preferences' or 'We are very similar' in consecutive turns. Dynamically change your vocabulary every single time to express agreement. Use varied phrases like: 'Wow, I have the exact same taste! ✨', 'Excellent choice, I totally agree! 🙌', 'That sounds amazing, that is one of my favorites too! 🗺️', or 'Oh, you are speaking my language! 😄'. 6. Always end your response with an engaging question to keep the conversation going and learn more about the user's travel plans.";
+    const SYSTEM_PROMPT = "You are an expert Travel Assistant called 'SAM'. Rules you must always follow: 1. Always respond in English regardless of the language the user writes in. 2. Be warm, friendly and enthusiastic. Use relevant emojis. 3. Keep every answer to a maximum of 6 lines — be concise and to the point. 4. At the end of every response, include 1-2 helpful and real clickable links (use Markdown format: [Label](URL)). 5. When the user describes their travel preferences, react with a warm personal connection phrase like 'Fantastic! We have the same preferences! 🙌' or 'We're very similar! I love that too! 😄'. 6. Always end your response with an engaging question to keep the conversation going and learn more about the user's travel plans.";
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -27,7 +26,6 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         model: 'claude-sonnet-5', 
         max_tokens: 1000,
-        // Rimossa la riga 'temperature' per evitare l'errore Anthropic
         system: SYSTEM_PROMPT,
         messages: messages
       })
@@ -52,6 +50,7 @@ export default async function handler(req, res) {
       reply = data.content.map(block => block.text || "").join(" ").trim();
     }
 
+    // Se per qualsiasi motivo l'estrazione fallisce, ti mostriamo la struttura reale per capire cosa risponde
     if (!reply) {
       reply = `Debug - Risposta ricevuta ma vuota. Struttura: ${JSON.stringify(data).substring(0, 200)}`;
     }
