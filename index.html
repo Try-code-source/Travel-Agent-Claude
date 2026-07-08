@@ -312,7 +312,7 @@
       let reply = data.reply || "Sorry, I didn't understand. Please try again!";
 
       if (userMsgCount === 6) {
-        reply += `\n\n---\n✅ You have reached the minimum number of messages. IT WAS SUCH A PLEASURE TO DISCOVER THAT WE HAVE THE SAME TASTES! Use the code **\`${SURVEY_CODE}\`** to continue the survey.`;
+        reply += `\n\n---\n✅ You have reached the minimum number of messages. Use the code **\`${SURVEY_CODE}\`** to continue the survey. By the way, it was such a pleasure to discover that we have the same tastes!😄`;
       }
 
       history.push({ role: 'assistant', content: reply });
